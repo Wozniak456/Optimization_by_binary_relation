@@ -14,26 +14,29 @@ def s_search(u_section, dim):
                 s_i.add(key)
         step += 1
         s[step] = s_i
-        s_unique[step] = s[step] - s[step-1]
-        s_i = s[step]-s[step-1]
+        s_unique[step] = s[step] - s[step - 1]
+        s_i = s[step] - s[step - 1]
         elements += len(s_i)
     return s_unique
 
 
 def q_search(u_section, dim):
     s_unique = s_search(u_section, dim)
-    print(f's: {s_unique}')
+    print(f's[i]\s[i-1]: {s_unique}')
     q = {0: s_unique[0]}
     step = 1
     for key, value in s_unique.items():
         for element in value:
-            if not set(u_section[element]).intersection(q[step-1]):
-                q[step] = set(q[step-1])
+            if not set(u_section[element]).intersection(q[step - 1]):
+                q[step] = set(q[step - 1])
                 q[step].add(element)
                 step += 1
     print(f'q: {q}')
-    print(f'The result: {q[step-1]}')
+    print(f'The result: {q[step - 1]}')
+    return q[step - 1]
 
 
-
-
+def check(edges, q_result):
+    for item in edges:
+        if item[0] in q_result:
+            print(f'{item[1]} is worse then {item[0]}')
