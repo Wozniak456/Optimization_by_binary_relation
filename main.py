@@ -1,14 +1,26 @@
 import graphviz
 from graph_functions import *
-
+from NM import *
 
 if __name__ == '__main__':
     # our matrix: 0 and 1 with spaces
     matrix = """
-0 0 1 0
-0 0 1 1
-0 0 0 1
-1 0 0 0
+ 0  1  1  1  1  0  1  0  0  1  1  0  0  1  1 
+ 0  0  0  1  0  0  1  0  1  1  0  0  0  0  1 
+ 0  1  0  1  1  0  1  0  0  0  1  1  0  0  0 
+ 0  0  0  0  1  1  0  1  0  1  1  1  1  1  0 
+ 0  0  0  0  0  1  1  1  1  1  1  0  1  1  0 
+ 0  0  0  0  0  0  1  1  1  1  1  1  0  0  0 
+ 0  0  0  0  0  0  0  0  0  1  0  1  1  1  1 
+ 0  0  0  0  0  0  0  0  0  1  1  1  1  0  0 
+ 0  0  0  0  0  0  1  1  0  1  0  0  1  1  0 
+ 0  0  0  0  0  0  0  0  0  0  1  1  1  0  0 
+ 0  0  0  0  0  0  0  0  0  0  0  1  1  0  0 
+ 0  0  0  0  0  0  0  0  0  0  0  0  0  1  0 
+ 0  0  0  0  0  0  0  0  0  0  0  1  0  0  1 
+ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  1 
+ 0  0  0  0  0  0  0  0  0  0  0  0  0  0  0 
+
 """
     # using the library Digraph to visualize the graph
     dot = graphviz.Digraph(comment='Graph')
@@ -23,19 +35,18 @@ if __name__ == '__main__':
 
     # interpret matrix into connections
     edges = make_connections_out_of_matrix(matrix, letters, dimension)
-
+    print(f'edges: {edges}')
     # add connections into the graph
     dot.edges(edges)
-
-    # checking for acyclicity
-    if not checking_for_acyclicity(edges, dimension, letters):
-        print('не ациклічний. є цикл')
-    else:
-        print('цикл не знайшовся. БВ ациклічне')
 
     # creation pdf file with graph
     dot.render('graph-output/graph.gv', view=True)
 
-
+    is_acyclic, connections_dict = checking_for_acyclicity(edges, dimension, letters)  # нижній переріз
+    if is_acyclic:
+        print('The graph is acyclic. Using Neumann–Morgenstern algorithm')
+        q_search(upper_section(edges, letters), dimension)
+    else:
+        print('The graph is not acyclic. Using K algorithm')
 
 

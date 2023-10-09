@@ -1,5 +1,6 @@
 import math
 import re
+import copy
 
 
 def get_dimension(mx):
@@ -39,8 +40,8 @@ def checking_for_acyclicity(edges, dim, letters_array):
     for k in range(dim):  # sorting the connections due to first element
         row_edges = [edge for edge in edges if edge[0] == letters_array[k]]
         filtered_edges[letters_array[k]] = row_edges
-    print(filtered_edges)
-
+    print(f'Connections: {filtered_edges}')
+    filtered_edges_copy = copy.deepcopy(filtered_edges)
     for key, value in filtered_edges.items():  # implementation of transitive closure
         for letter in value:
             middle = letter[1]
@@ -51,6 +52,30 @@ def checking_for_acyclicity(edges, dim, letters_array):
                         if f'{key}{end}' not in value:
                             filtered_edges[key].append(f'{key}{end}')
         if checking_for_loop(value):    # if transitive closure has connections like xRx then immediately not acyclic
-            print(f'для {key} знайдено цикл: {value}')
+            print(f'For {key}-node cycle found: {value}')
             return False
-    return True
+    return True, filtered_edges_copy
+
+
+# нижній переріз
+def lower_section(edges, letters):
+    l_section = {}
+    for letter in letters:
+        l_edges = []
+        for edge in edges:
+            if edge[0] == letter:
+                l_edges.append(edge[1])
+        l_section[letter] = l_edges
+    return l_section
+
+
+# верхній переріз
+def upper_section(edges, letters):
+    u_section = {}
+    for letter in letters:
+        l_edges = []
+        for edge in edges:
+            if edge[1] == letter:
+                l_edges.append(edge[0])
+        u_section[letter] = l_edges
+    return u_section
